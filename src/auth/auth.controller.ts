@@ -2,8 +2,8 @@ import { Body, Controller, Post, Req, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SetMetadata } from '@nestjs/common';
 import { Public } from 'src/utils/public.auth.decorator';
-import { SignupDto } from './signup.dto';
-import { SigninDto } from './signin.dto';
+import { SignupDto } from './dto/signup.dto';
+import { SigninDto } from './dto/signin.dto';
 
 @Controller('auth')
 export class AuthController {
