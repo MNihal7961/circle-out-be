@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/c
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { hashPassword, comparePassword } from '../utils/hash.functions';
+import { SignupDto } from './signup.dto';
+import { SigninDto } from './signin.dto';
 
 @Injectable()
 export class AuthService {
@@ -10,9 +12,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signup(email: string, password: string) {
+  async signup(signupDto: SignupDto) {
     try {
-      const existing = await this.userService.findByEmail(email);
+      const existing = await this.userService.findByEmail(signupDto.email);
       if (existing) {
         return {
           success: false,
@@ -20,8 +22,8 @@ export class AuthService {
           data: null,
         };
       }
-      const hash = await hashPassword(password, 10);
-      const user = await this.userService.createUser(email, hash);
+      const hash = await hashPassword(signupDto.password, 10);
+      const user = await this.userService.createUser({ ...signupDto, password: hash });
       const tokens = await this.generateTokens(user.id, user.email);
       await this.userService.updateRefreshToken(user.id, tokens.refreshToken);
       return {
@@ -38,9 +40,9 @@ export class AuthService {
     }
   }
 
-  async signin(email: string, password: string) {
+  async signin(signinDto: SigninDto) {
     try {
-      const user = await this.userService.findByEmail(email);
+      const user = await this.userService.findByEmail(signinDto.email);
       if (!user) {
         return {
           success: false,
@@ -48,7 +50,7 @@ export class AuthService {
           data: null,
         };
       }
-      const valid = await comparePassword(password, user.password);
+      const valid = await comparePassword(signinDto.password, user.password);
       if (!valid) {
         return {
           success: false,

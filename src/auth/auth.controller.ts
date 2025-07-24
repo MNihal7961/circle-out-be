@@ -2,6 +2,8 @@ import { Body, Controller, Post, Req, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SetMetadata } from '@nestjs/common';
 import { Public } from 'src/utils/public.auth.decorator';
+import { SignupDto } from './signup.dto';
+import { SigninDto } from './signin.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -9,14 +11,14 @@ export class AuthController {
 
   @Public()
   @Post('signup')
-  async signup(@Body() body: { email: string; password: string }) {
-    return this.authService.signup(body.email, body.password);
+  async signup(@Body() signupDto: SignupDto) {
+    return this.authService.signup(signupDto);
   }
 
   @Public()
   @Post('signin')
-  async signin(@Body() body: { email: string; password: string }) {
-    return this.authService.signin(body.email, body.password);
+  async signin(@Body() signinDto: SigninDto) {
+    return this.authService.signin(signinDto);
   }
 
   @Public()
